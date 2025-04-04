@@ -1,0 +1,1492 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>צ'אטבוט לתרגול מתמטיקה</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .chat-messages {
+            height: 550px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+            position: relative;
+            line-height: 1.5;
+        }
+        
+        .user-message {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .bot-message {
+            background-color: #f3f4f6;
+            color: #111827;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .input-area {
+            display: flex;
+            padding: 15px;
+            background-color: #f3f4f6;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .message-input {
+            flex-grow: 1;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 24px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .message-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        
+        .send-button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            margin-right: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+        
+        .send-button:hover {
+            background-color: #2563eb;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .option-button {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
+            border-radius: 16px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option-button:hover {
+            background-color: #bae6fd;
+            border-color: #0284c7;
+        }
+        
+        .math-formula {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            padding: 2px 4px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .highlighted {
+            background-color: #fef3c7;
+            font-weight: 500;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        
+        .topic-intro {
+            background-color: #f0f9ff;
+            border-right: 4px solid #0ea5e9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        table, th, td {
+            border: 1px solid #d1d5db;
+        }
+        
+        th, td {
+            padding: 8px 12px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: #f3f4f6;
+        }
+        
+        .svg-container {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        
+        .hint {
+            background-color: #ecfdf5;
+            border-right: 4px solid #10b981;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .exercise {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        
+        .mc-option {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            padding: 8px 12px;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .mc-option:hover {
+            background-color: #f3f4f6;
+            border-color: #d1d5db;
+        }
+        
+        .mc-option.selected {
+            background-color: #dbeafe;
+            border-color: #93c5fd;
+        }
+        
+        .mc-option-text {
+            margin-right: 10px;
+        }
+        
+        .upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            margin: 15px 0;
+            background-color: #f9fafb;
+            transition: all 0.3s;
+        }
+        
+        .upload-container:hover {
+            border-color: #93c5fd;
+            background-color: #f3f4f6;
+        }
+        
+        .upload-input {
+            display: none;
+        }
+        
+        .upload-label {
+            color: #3b82f6;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .solution-steps {
+            counter-reset: step;
+        }
+        
+        .solution-step {
+            position: relative;
+            padding-right: 30px;
+            margin-bottom: 10px;
+        }
+        
+        .solution-step:before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            right: 0;
+            top: 0;
+            background-color: #3b82f6;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="py-8">
+        <div class="chat-container">
+            <div class="bg-blue-600 text-white py-4 px-6">
+                <h1 class="text-xl font-bold text-center">צ'אטבוט לתרגול מתמטיקה, גיאומטריה וטריגונומטריה</h1>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here by JavaScript -->
+            </div>
+            
+            <div class="input-area">
+                <input type="text" class="message-input" id="messageInput" placeholder="הקלד/י את הודעתך כאן..." autocomplete="off">
+                <button class="send-button" id="sendButton">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            
+            // Bot state
+            let botState = {
+                stage: 'intro',
+                topic: null,
+                grade: null,
+                level: null,
+                exerciseType: null,
+                currentExercise: null,
+                userSolution: null,
+                hintsGiven: 0
+            };
+            
+            // Add event listeners
+            sendButton.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Initial bot message
+            setTimeout(() => {
+                addBotMessage(`שלום! אני בוט לימודי שמסייע בתרגול מתמטיקה, גיאומטריה וטריגונומטריה לתלמידי חטיבת ביניים ותיכון.
+
+אני כאן כדי לעזור לך ללמוד טוב יותר, לחשוב בעצמך, ולהדריך אותך בלימודים.
+
+כדי שאוכל לסייע לך בצורה הטובה ביותר, אנא ענה/י על השאלות הבאות:`);
+                
+                setTimeout(() => {
+                    addBotMessage(`איזה נושא לימוד תרצה/י לתרגל?`, [
+                        'צורות גיאומטריות - חישובי שטחים, הקפים, ונפח',
+                        'משולשים - דמיון או חפיפה',
+                        'טריגונומטריה במשולש ישר זווית',
+                        'נושא אחר במתמטיקה'
+                    ]);
+                }, 500);
+            }, 500);
+            
+            function sendMessage() {
+                const message = messageInput.value.trim();
+                if (message === '') return;
+                
+                addUserMessage(message);
+                messageInput.value = '';
+                
+                // Process user message based on current state
+                processUserMessage(message);
+            }
+            
+            function processUserMessage(message) {
+                setTimeout(() => {
+                    switch(botState.stage) {
+                        case 'intro':
+                            processTopic(message);
+                            break;
+                        case 'grade':
+                            processGrade(message);
+                            break;
+                        case 'level':
+                            processLevel(message);
+                            break;
+                        case 'exerciseType':
+                            processExerciseType(message);
+                            break;
+                        case 'exercise':
+                            processExerciseSolution(message);
+                            break;
+                        case 'hint':
+                            provideNextHint();
+                            break;
+                        case 'solution':
+                            processAfterSolution(message);
+                            break;
+                        default:
+                            defaultResponse();
+                    }
+                }, 500);
+            }
+            
+            function processTopic(message) {
+                const topics = [
+                    'צורות גיאומטריות',
+                    'משולשים',
+                    'טריגונומטריה',
+                    'נושא אחר'
+                ];
+                
+                let selectedTopic = null;
+                
+                for (const topic of topics) {
+                    if (message.includes(topic)) {
+                        selectedTopic = topic;
+                        break;
+                    }
+                }
+                
+                if (message.includes('שטח') || message.includes('היקף') || message.includes('נפח')) {
+                    selectedTopic = 'צורות גיאומטריות';
+                }
+                
+                if (message.includes('דמיון') || message.includes('חפיפה')) {
+                    selectedTopic = 'משולשים';
+                }
+                
+                if (selectedTopic) {
+                    botState.topic = selectedTopic;
+                    botState.stage = 'grade';
+                    
+                    addBotMessage(`מצוין, נעבוד על ${selectedTopic}. 
+באיזו כיתה את/ה לומד/ת?`, [
+                        'כיתה ז',
+                        'כיתה ח',
+                        'כיתה ט',
+                        'תיכון'
+                    ]);
+                } else {
+                    addBotMessage(`אני לא בטוח שהבנתי את הנושא שאתה מעוניין בו. אנא בחר מהאפשרויות הבאות:`, [
+                        'צורות גיאומטריות - חישובי שטחים, הקפים, ונפח',
+                        'משולשים - דמיון או חפיפה',
+                        'טריגונומטריה במשולש ישר זווית',
+                        'נושא אחר במתמטיקה'
+                    ]);
+                }
+            }
+            
+            function processGrade(message) {
+                const grades = {
+                    'ז': 7,
+                    'ח': 8,
+                    'ט': 9,
+                    'תיכון': 10, // Representing high school
+                    'י': 10,
+                    'יא': 11,
+                    'יב': 12
+                };
+                
+                let selectedGrade = null;
+                
+                for (const [grade, value] of Object.entries(grades)) {
+                    if (message.includes(grade)) {
+                        selectedGrade = value;
+                        break;
+                    }
+                }
+                
+                if (selectedGrade) {
+                    botState.grade = selectedGrade;
+                    botState.stage = 'level';
+                    
+                    addBotMessage(`תודה! ומהי רמת הלימוד שלך?`, [
+                        'רגילה',
+                        'מוגברת'
+                    ]);
+                } else {
+                    addBotMessage(`אני לא בטוח שהבנתי את הכיתה שלך. אנא בחר מהאפשרויות הבאות:`, [
+                        'כיתה ז',
+                        'כיתה ח',
+                        'כיתה ט',
+                        'תיכון'
+                    ]);
+                }
+            }
+            
+            function processLevel(message) {
+                if (message.includes('רגיל')) {
+                    botState.level = 'רגילה';
+                    proceedToExerciseType();
+                } else if (message.includes('מוגבר')) {
+                    botState.level = 'מוגברת';
+                    proceedToExerciseType();
+                } else {
+                    addBotMessage(`אני לא בטוח שהבנתי את רמת הלימוד שלך. אנא בחר מהאפשרויות הבאות:`, [
+                        'רגילה',
+                        'מוגברת'
+                    ]);
+                }
+            }
+            
+            function proceedToExerciseType() {
+                botState.stage = 'exerciseType';
+                
+                addBotMessage(`מעולה! אתה לומד/ת בכיתה ${botState.grade === 10 ? 'תיכון' : botState.grade} ברמה ${botState.level}.
+                
+כעת, האם תרצה/י להעלות תרגיל לעזרה בפתרון, או שאציע לך תרגיל לתרגול?`, [
+                    'אני רוצה להעלות תרגיל',
+                    'אשמח לקבל תרגיל ממך'
+                ]);
+            }
+            
+            function processExerciseType(message) {
+                if (message.includes('להעלות') || message.includes('שלי')) {
+                    botState.exerciseType = 'user';
+                    
+                    addBotMessage(`בסדר גמור! אשמח לעזור לך עם תרגיל משלך.
+
+אנא תאר/י את התרגיל בצורה מפורטת ככל האפשר, או העתק/י אותו לשיחה. אם יש נתונים מספריים או שרטוטים, ציין/י אותם.`);
+                    
+                    botState.stage = 'waitingForExercise';
+                } else if (message.includes('קבל') || message.includes('ממך') || message.includes('תרגיל')) {
+                    botState.exerciseType = 'bot';
+                    
+                    // First provide an intro to the topic
+                    provideTopicIntro();
+                    
+                    // Then provide an exercise
+                    setTimeout(() => {
+                        provideExercise();
+                    }, 1000);
+                } else {
+                    addBotMessage(`אני לא בטוח מה בחרת. האם תרצה/י להעלות תרגיל משלך או לקבל תרגיל ממני?`, [
+                        'אני רוצה להעלות תרגיל',
+                        'אשמח לקבל תרגיל ממך'
+                    ]);
+                }
+            }
+            
+            function provideTopicIntro() {
+                let introHTML = '';
+                
+                if (botState.topic.includes('צורות גיאומטריות')) {
+                    introHTML = `
+                    <div class="topic-intro">
+                        <h3 class="text-lg font-bold mb-3">יסודות חישובי שטחים, היקפים ונפחים</h3>
+                        
+                        <p class="mb-2">לפני שנתחיל בתרגול, בוא/י נזכר בנוסחאות הבסיסיות:</p>
+                        
+                        <h4 class="font-bold mt-4 mb-2">צורות דו-ממדיות:</h4>
+                        <ul class="list-disc list-inside">
+                            <li><span class="highlighted">מלבן:</span> היקף = 2 × (אורך + רוחב), שטח = אורך × רוחב</li>
+                            <li><span class="highlighted">ריבוע:</span> היקף = 4 × צלע, שטח = צלע × צלע</li>
+                            <li><span class="highlighted">משולש:</span> היקף = סכום הצלעות, שטח = (בסיס × גובה) ÷ 2</li>
+                            <li><span class="highlighted">מעגל:</span> היקף = 2 × π × רדיוס, שטח = π × רדיוס²</li>
+                            <li><span class="highlighted">טרפז:</span> שטח = (בסיס א + בסיס ב) × גובה ÷ 2</li>
+                        </ul>
+                        
+                        <h4 class="font-bold mt-4 mb-2">גופים תלת-ממדיים:</h4>
+                        <ul class="list-disc list-inside">
+                            <li><span class="highlighted">תיבה:</span> נפח = אורך × רוחב × גובה</li>
+                            <li><span class="highlighted">קובייה:</span> נפח = צלע³</li>
+                            <li><span class="highlighted">גליל:</span> נפח = π × רדיוס² × גובה</li>
+                        </ul>
+                        
+                        <p class="mt-4">חשוב לזכור: <span class="highlighted">יחידות השטח</span> הן תמיד בריבוע (למשל: סמ"ר, מ"ר), ו<span class="highlighted">יחידות הנפח</span> הן תמיד בשלישית (למשל: סמ"ק, מ"ק).</p>
+                    </div>
+                    `;
+                } else if (botState.topic.includes('משולשים')) {
+                    introHTML = `
+                    <div class="topic-intro">
+                        <h3 class="text-lg font-bold mb-3">יסודות דמיון וחפיפת משולשים</h3>
+                        
+                        <h4 class="font-bold mt-2 mb-2">משולשים חופפים:</h4>
+                        <p class="mb-2">שני משולשים הם <span class="highlighted">חופפים</span> כאשר כל הצלעות והזוויות המתאימות שוות. יש מספר משפטי חפיפה:</p>
+                        
+                        <ul class="list-disc list-inside">
+                            <li><span class="highlighted">צ.צ.צ</span> - שלוש צלעות שוות</li>
+                            <li><span class="highlighted">צ.ז.צ</span> - שתי צלעות והזווית שביניהן שוות</li>
+                            <li><span class="highlighted">ז.צ.ז</span> - שתי זוויות והצלע שביניהן שוות</li>
+                        </ul>
+                        
+                        <h4 class="font-bold mt-4 mb-2">משולשים דומים:</h4>
+                        <p class="mb-2">שני משולשים הם <span class="highlighted">דומים</span> כאשר כל הזוויות שוות וכל הצלעות המתאימות פרופורציונליות (ביחס קבוע). משפטי דמיון:</p>
+                        
+                        <ul class="list-disc list-inside">
+                            <li><span class="highlighted">ז.ז</span> - שתי זוויות שוות (הזווית השלישית נקבעת אוטומטית)</li>
+                            <li><span class="highlighted">צ.צ.צ</span> - יחס הצלעות המתאימות שווה</li>
+                            <li><span class="highlighted">צ.ז.צ</span> - יחס שתי צלעות שווה והזווית ביניהן שווה</li>
+                        </ul>
+                        
+                        <p class="mt-3">עבור משולשים דומים, היחס בין השטחים שווה ליחס הצלעות בריבוע: אם יחס הצלעות הוא k, יחס השטחים הוא k².</p>
+                    </div>
+                    `;
+                } else if (botState.topic.includes('טריגונומטריה')) {
+                    introHTML = `
+                    <div class="topic-intro">
+                        <h3 class="text-lg font-bold mb-3">יסודות הטריגונומטריה במשולש ישר זווית</h3>
+                        
+                        <p class="mb-2">במשולש ישר זווית, ניתן להגדיר את היחסים הטריגונומטריים הבסיסיים:</p>
+                        
+                        <div class="svg-container">
+                            <svg width="250" height="200" viewBox="0 0 250 200">
+                                <!-- משולש ישר זווית -->
+                                <polygon points="50,150 50,50 200,150" fill="#e0f2fe" stroke="#0369a1" stroke-width="3"/>
+                                
+                                <!-- סימון הזווית הישרה -->
+                                <path d="M 50,130 L 50,150 L 70,150" fill="none" stroke="#0369a1" stroke-width="2"/>
+                                
+                                <!-- סימון הזווית α -->
+                                <path d="M 65,150 A 20,20 0 0 0 50,135" fill="none" stroke="#0ea5e9" stroke-width="2"/>
+                                <text x="60" y="140" font-size="16" fill="#0ea5e9">α</text>
+                                
+                                <!-- צלעות -->
+                                <text x="115" y="170" font-size="16" fill="#0369a1">ניצב סמוך = b</text>
+                                <text x="20" y="100" font-size="16" fill="#0369a1">ניצב נגדי = a</text>
+                                <text x="125" y="100" font-size="16" fill="#0369a1">יתר = c</text>
+                            </svg>
+                        </div>
+                        
+                        <ul class="list-disc list-inside mt-3">
+                            <li><span class="highlighted">סינוס (sin):</span> הניצב שמול הזווית חלקי היתר = a/c</li>
+                            <li><span class="highlighted">קוסינוס (cos):</span> הניצב הסמוך לזווית חלקי היתר = b/c</li>
+                            <li><span class="highlighted">טנגנס (tan):</span> הניצב שמול הזווית חלקי הניצב הסמוך = a/b</li>
+                        </ul>
+                        
+                        <p class="mt-3">משפט פיתגורס: במשולש ישר זווית, ריבוע היתר שווה לסכום ריבועי הניצבים:</p>
+                        <p class="mx-auto text-center my-2"><span class="math-formula">a² + b² = c²</span></p>
+                    </div>
+                    `;
+                } else {
+                    introHTML = `
+                    <div class="topic-intro">
+                        <h3 class="text-lg font-bold mb-3">נושאים במתמטיקה</h3>
+                        <p>לפני שנתחיל בתרגול, חשוב להבין את העקרונות הבסיסיים של הנושא שבחרת. אשמח להתחיל בהסבר קצר ואז לעבור לתרגול.</p>
+                    </div>
+                    `;
+                }
+                
+                addBotMessage(introHTML);
+            }
+            
+            function provideExercise() {
+                botState.stage = 'exercise';
+                
+                // Choose exercise based on topic and grade
+                let exerciseHTML = '';
+                
+                if (botState.topic.includes('צורות גיאומטריות')) {
+                    if (botState.grade <= 8) { // 7th-8th grade
+                        exerciseHTML = `
+                        <div class="exercise">
+                            <h3 class="font-bold mb-2">תרגיל: חישוב שטח והיקף</h3>
+                            
+                            <p>נתון מלבן שאורכו 8 ס"מ ורוחבו 5 ס"מ.</p>
+                            
+                            <div class="svg-container">
+                                <svg width="300" height="200" viewBox="0 0 300 200">
+                                    <!-- מלבן -->
+                                    <rect x="50" y="50" width="200" height="125" fill="#e0f2fe" stroke="#0369a1" stroke-width="3"/>
+                                    
+                                    <!-- מידות -->
+                                    <text x="140" y="40" font-size="18" fill="#0369a1">5 ס"מ</text>
+                                    <text x="260" y="115" font-size="18" fill="#0369a1">8 ס"מ</text>
+                                    
+                                    <!-- חצים -->
+                                    <line x1="50" y1="30" x2="250" y2="30" stroke="#0369a1" stroke-width="2" marker-end="url(#arrowhead)" marker-start="url(#arrowhead)"/>
+                                    <line x1="270" y1="50" x2="270" y2="175" stroke="#0369a1" stroke-width="2" marker-end="url(#arrowhead)" marker-start="url(#arrowhead)"/>
+                                    
+                                    <!-- מרקרים לחצים -->
+                                    <defs>
+                                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                            <polygon points="0 0, 10 3.5, 0 7" fill="#0369a1"/>
+                                        </marker>
+                                    </defs>
+                                </svg>
+                            </div>
+                            
+                            <p class="mt-4">שאלות:</p>
+                            <ol class="list-decimal list-inside">
+                                <li>מהו היקף המלבן?</li>
+                                <li>מהו שטח המלבן?</li>
+                                <li>אם מחלקים את המלבן לשני מלבנים שווים על ידי קו ישר המקביל לצלע הקצרה, מהו שטח כל חלק?</li>
+                            </ol>
+                        </div>
+                        `;
+                        
+                        botState.currentExercise = {
+                            type: 'rectangle',
+                            length: 8,
+                            width: 5,
+                            answers: {
+                                perimeter: 26,
+                                area: 40,
+                                halfArea: 20
+                            }
+                        };
+                    } else { // 9th grade and up
+                        exerciseHTML = `
+                        <div class="exercise">
+                            <h3 class="font-bold mb-2">תרגיל: חישוב נפח וצורות מורכבות</h3>
+                            
+                            <p>נתונה צורה מורכבת המורכבת ממלבן בגובה 4 ס"מ, שעליו ממוקם חצי מעגל ברדיוס 3 ס"מ.</p>
+                            
+                            <div class="svg-container">
+                                <svg width="300" height="230" viewBox="0 0 300 230">
+                                    <!-- מלבן -->
+                                    <rect x="100" y="120" width="120" height="80" fill="#e0f2fe" stroke="#0369a1" stroke-width="3"/>
+                                    
+                                    <!-- חצי מעגל -->
+                                    <path d="M 100,120 A 60,60 0 0 1 220,120" fill="#dbeafe" stroke="#0369a1" stroke-width="3"/>
+                                    
+                                    <!-- מידות -->
+                                    <text x="150" y="210" font-size="18" fill="#0369a1">6 ס"מ</text>
+                                    <text x="230" y="160" font-size="18" fill="#0369a1">4 ס"מ</text>
+                                    <text x="160" y="100" font-size="18" fill="#0369a1">r = 3 ס"מ</text>
+                                    
+                                    <!-- סימון רדיוס -->
+                                    <line x1="160" y1="120" x2="160" y2="80" stroke="#0369a1" stroke-width="2" stroke-dasharray="5,5"/>
+                                    
+                                    <!-- חצים -->
+                                    <line x1="100" y1="210" x2="220" y2="210" stroke="#0369a1" stroke-width="2" marker-end="url(#arrowhead)" marker-start="url(#arrowhead)"/>
+                                    <line x1="240" y1="120" x2="240" y2="200" stroke="#0369a1" stroke-width="2" marker-end="url(#arrowhead)" marker-start="url(#arrowhead)"/>
+                                    
+                                    <!-- מרקרים לחצים -->
+                                    <defs>
+                                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                            <polygon points="0 0, 10 3.5, 0 7" fill="#0369a1"/>
+                                        </marker>
+                                    </defs>
+                                </svg>
+                            </div>
+                            
+                            <p class="mt-4">שאלות:</p>
+                            <ol class="list-decimal list-inside">
+                                <li>מהו שטח המלבן?</li>
+                                <li>מהו שטח חצי המעגל?</li>
+                                <li>מהו השטח הכולל של הצורה המורכבת?</li>
+                                <li>אם סובבים את הצורה סביב הצלע התחתונה של המלבן, מהו נפח הגוף שמתקבל? (π ≈ 3.14)</li>
+                            </ol>
+                        </div>
+                        `;
+                        
+                        botState.currentExercise = {
+                            type: 'compoundShape',
+                            rectangleWidth: 6,
+                            rectangleHeight: 4,
+                            radius: 3,
+                            answers: {
+                                rectangleArea: 24,
+                                semicircleArea: 14.13, // π × r² / 2 ≈ 3.14 × 9 / 2
+                                totalArea: 38.13, // 24 + 14.13
+                                volume: 337.07 // π × r² × h + (πr²h/2) ≈ 3.14 × 36 × 6 + (3.14 × 9 × 4)
+                            }
+                        };
+                    }
+                } else if (botState.topic.includes('משולשים')) {
+                    if (botState.grade <= 8) { // 7th-8th grade
+                        exerciseHTML = `
+                        <div class="exercise">
+                            <h3 class="font-bold mb-2">תרגיל: חפיפת משולשים</h3>
+                            
+                            <p>נתונים שני משולשים: משולש ABC ומשולש DEF.</p>
+                            <p>משולש ABC: AB = 5 ס"מ, AC = 7 ס"מ, והזווית A = 50°.</p>
+                            <p>משולש DEF: DE = 5 ס"מ, DF = 7 ס"מ, והזווית D = 50°.</p>
+                            
+                            <div class="svg-container">
+                                <svg width="450" height="200" viewBox="0 0 450 200">
+                                    <!-- משולש ראשון -->
+                                    <polygon points="50,150 120,50 180,160" fill="#e0f2fe" stroke="#0369a1" stroke-width="3"/>
+                                    
+                                    <!-- משולש שני -->
+                                    <polygon points="250,150 320,50 380,160" fill="#dbeafe" stroke="#0ea5e9" stroke-width="3"/>
+                                    
+                                    <!-- נקודות ותוויות -->
+                                    <text x="40" y="165" font-size="18" fill="#0369a1">A</text>
+                                    <text x="120" y="40" font-size="18" fill="#0369a1">B</text>
+                                    <text x="185" y="165" font-size="18" fill="#0369a1">C</text>
+                                    
+                                    <text x="240" y="165" font-size="18" fill="#0ea5e9">D</text>
+                                    <text x="320" y="40" font-size="18" fill="#0ea5e9">E</text>
+                                    <text x="385" y="165" font-size="18" fill="#0ea5e9">F</text>
+                                    
+                                    <!-- מידות -->
+                                    <text x="85" y="110" font-size="14" fill="#0369a1">5 ס"מ</text>
+                                    <text x="130" y="120" font-size="14" fill="#0369a1">7 ס"מ</text>
+                                    <text x="50" y="130" font-size="14" fill="#0369a1">50°</text>
+                                    
+                                    <text x="285" y="110" font-size="14" fill="#0ea5e9">5 ס"מ</text>
+                                    <text x="330" y="120" font-size="14" fill="#0ea5e9">7 ס"מ</text>
+                                    <text x="250" y="130" font-size="14" fill="#0ea5e9">50°</text>
+                                    
+                                    <!-- סימון זוויות -->
+                                    <path d="M 50,150 A 20,20 0 0 0 70,142" fill="none" stroke="#0369a1" stroke-width="2"/>
+                                    <path d="M 250,150 A 20,20 0 0 0 270,142" fill="none" stroke="#0ea5e9" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            
+                            <p class="mt-4">שאלות:</p>
+                            <ol class="list-decimal list-inside">
+                                <li>האם המשולשים חופפים? אם כן, ציין איזה משפט חפיפה מתקיים.</li>
+                                <li>מהו אורך הצלע BC?</li>
+                                <li>מהי הזווית B?</li>
+                            </ol>
+                        </div>
+                        `;
+                        
+                        botState.currentExercise = {
+                            type: 'triangleCongruence',
+                            answers: {
+                                congruent: true,
+                                congruenceRule: 'צ.ז.צ',
+                                sideBC: 8.54, // יש לחשב באמצעות חוק הקוסינוסים או משפט פיתגורס + משפטים על משולשים
+                                angleB: 60 // יש לחשב באמצעות סכום זוויות במשולש או חוק הסינוסים
+                            }
+                        };
+                    } else { // 9th grade and up
+                        exerciseHTML = `
+                        <div class="exercise">
+                            <h3 class="font-bold mb-2">תרגיל: דמיון משולשים</h3>
+                            
+                            <p>במשולש ABC, נקודה D נמצאת על הצלע AC כך ש-AD:DC = 1:2. 
+                            דרך D מעבירים ישר המקביל לצלע AB, והוא חותך את BC בנקודה E.</p>
+                            
+                            <div class="svg-container">
+                                <svg width="350" height="280" viewBox="0 0 350 280">
+                                    <!-- משולש גדול -->
+                                    <polygon points="100,220 300,220 200,50" fill="#e0f2fe" stroke="#0369a1" stroke-width="3"/>
+                                    
+                                    <!-- קו מקביל ונקודות -->
+                                    <line x1="150" y1="163.33" x2="233.33" y2="163.33" stroke="#0ea5e9" stroke-width="3" stroke-dasharray="5,5"/>
+                                    
+                                    <!-- נקודות -->
+                                    <circle cx="100" cy="220" r="4" fill="#0369a1"/>
+                                    <circle cx="300" cy="220" r="4" fill="#0369a1"/>
+                                    <circle cx="200" cy="50" r="4" fill="#0369a1"/>
+                                    <circle cx="150" cy="163.33" r="4" fill="#0ea5e9"/>
+                                    <circle cx="233.33" cy="163.33" r="4" fill="#0ea5e9"/>
+                                    
+                                    <!-- תוויות -->
+                                    <text x="90" y="235" font-size="16" fill="#0369a1">A</text>
+                                    <text x="305" y="235" font-size="16" fill="#0369a1">B</text>
+                                    <text x="200" y="40" font-size="16" fill="#0369a1">C</text>
+                                    <text x="145" y="185" font-size="16" fill="#0ea5e9">D</text>
+                                    <text x="245" y="185" font-size="16" fill="#0ea5e9">E</text>
+                                    
+                                    <!-- יחס -->
+                                    <text x="120" y="250" font-size="14" fill="#0ea5e9">AD:DC = 1:2</text>
+                                </svg>
+                            </div>
+                            
+                            <p class="mt-4">שאלות:</p>
+                            <ol class="list-decimal list-inside">
+                                <li>מהו היחס BE:EC?</li>
+                                <li>מהו היחס בין שטח המשולש ADE לשטח המשולש ABC?</li>
+                                <li>אם שטח המשולש ABC הוא 90 סמ"ר, מהו שטח המשולש ADE?</li>
+                            </ol>
+                        </div>
+                        `;
+                        
+                        botState.currentExercise = {
+                            type: 'triangleSimilarity',
+                            ratios: {
+                                AD_DC: '1:2',
+                            },
+                            answers: {
+                                BE_EC: '1:2', // היחס זהה ליחס AD:DC בגלל המקבילות
+                                areaRatio: '1:9', // (1/3)² = 1/9
+                                areaADE: 10 // 90 ÷ 9 = 10
+                            }
+                        };
+                    }
+                } else if (botState.topic.includes('טריגונומטריה')) {
+                    if (botState.grade <= 9) { // חטיבת ביניים
+                        exerciseHTML = `
+                        <div class="exercise">
+                            <h3 class="font-bold mb-2">תרגיל: טריגונומטריה במשולש ישר זווית</h3>
+                            
+                            <p>נתון משולש ישר זווית ABC, הישר בזווית C. הניצב AC = 8 ס"מ והניצב BC = 6 ס"מ.</p>
+                            
+                            <div class="svg-container">
+                                <svg width="320" height="240" viewBox="0 0 320 240">
+                                    <!-- משולש ישר זווית -->
+                                    <polygon points="80,180 280,180 80,60" fill="#e0f2fe" stroke="#0369a1" stroke-width="3"/>
+                                    
+                                    <!-- סימון זווית ישרה -->
+                                    <path d="M 100,180 L 80,180 L 80,160" fill="none" stroke="#0369a1" stroke-width="2"/>
+                                    
+                                    <!-- נקודות -->
+                                    <circle cx="80" cy="60" r="4" fill="#0369a1"/>
+                                    <circle cx="80" cy="180" r="4" fill="#0369a1"/>
+                                    <circle cx="280" cy="180" r="4" fill="#0369a1"/>
+                                    
+                                    <!-- תוויות -->
+                                    <text x="70" y="50" font-size="18" fill="#0369a1">A</text>
+                                    <text x="285" y="195" font-size="18" fill="#0369a1">B</text>
+                                    <text x="70" y="195" font-size="18" fill="#0369a1">C</text>
+                                    
+                                    <!-- מידות -->
+                                    <text x="60" y="125" font-size="16" fill="#0369a1">8 ס"מ</text>
+                                    <text x="170" y="200" font-size="16" fill="#0369a1">6 ס"מ</text>
+                                    
+                                    <!-- סימון זוויות -->
+                                    <path d="M 280,180 A 20,20 0 0 1 265,170" fill="none" stroke="#0ea5e9" stroke-width="2"/>
+                                    <path d="M 80,60 A 20,20 0 0 0 95,70" fill="none" stroke="#0ea5e9" stroke-width="2"/>
+                                    
+                                    <text x="260" y="160" font-size="16" fill="#0ea5e9">α</text>
+                                    <text x="95" y="80" font-size="16" fill="#0ea5e9">β</text>
+                                </svg>
+                            </div>
+                            
+                            <p class="mt-4">שאלות:</p>
+                            <ol class="list-decimal list-inside">
+                                <li>מהו אורך היתר AB?</li>
+                                <li>מהו ערכה של sin α?</li>
+                                <li>מהו ערכה של cos β?</li>
+                                <li>מהו ערכה של tan α?</li>
+                            </ol>
+                        </div>
+                        `;
+                        
+                        botState.currentExercise = {
+                            type: 'rightTriangleTrig',
+                            sides: {
+                                a: 8, // ניצב 1
+                                b: 6, // ניצב 2
+                            },
+                            answers: {
+                                hypotenuse: 10, // לפי משפט פיתגורס: √(8² + 6²) = √(64 + 36) = √100 = 10
+                                sinAlpha: 0.8, // sin α = 8/10 = 0.8
+                                cosBeta: 0.8, // cos β = 6/10 = 0.6, אבל זו טעות - cos β = 8/10 = 0.8
+                                tanAlpha: 1.33 // tan α = 8/6 = 4/3 ≈ 1.33
+                            }
+                        };
+                    } else { // תיכון
+                        exerciseHTML = `
+                        <div class="exercise">
+                            <h3 class="font-bold mb-2">תרגיל: יישומי טריגונומטריה</h3>
+                            
+                            <p>מגדל בגובה 50 מטר ניצב על קרקע מישורית. מנקודה A על הקרקע, המרחק האופקי מהמגדל הוא 30 מטר. 
+                            נקודה B היא ראש המגדל.</p>
+                            
+                            <div class="svg-container">
+                                <svg width="350" height="300" viewBox="0 0 350 300">
+                                    <!-- משולש ישר זווית וקרקע -->
+                                    <line x1="50" y1="250" x2="300" y2="250" stroke="#0369a1" stroke-width="2"/>
+                                    <line x1="150" y1="250" x2="150" y2="50" stroke="#0369a1" stroke-width="3"/>
+                                    <line x1="150" y1="50" x2="250" y2="250" stroke="#0369a1" stroke-width="3"/>
+                                    
+                                    <!-- סימון זווית ישרה -->
+                                    <path d="M 150,230 L 150,250 L 170,250" fill="none" stroke="#0369a1" stroke-width="2"/>
+                                    
+                                    <!-- נקודות -->
+                                    <circle cx="150" cy="50" r="4" fill="#0369a1"/>
+                                    <circle cx="150" cy="250" r="4" fill="#0369a1"/>
+                                    <circle cx="250" cy="250" r="4" fill="#0369a1"/>
+                                    
+                                    <!-- תוויות -->
+                                    <text x="140" y="40" font-size="18" fill="#0369a1">B</text>
+                                    <text x="140" y="270" font-size="18" fill="#0369a1">C</text>
+                                    <text x="260" y="270" font-size="18" fill="#0369a1">A</text>
+                                    <text x="180" y="150" font-size="18" fill="#0ea5e9">θ</text>
+                                    
+                                    <!-- מידות -->
+                                    <text x="110" y="150" font-size="16" fill="#0369a1">50 מ'</text>
+                                    <text x="190" y="270" font-size="16" fill="#0369a1">30 מ'</text>
+                                    
+                                    <!-- סימון מגדל -->
+                                    <text x="100" y="150" font-size="16" fill="#666">מגדל</text>
+                                    <text x="200" y="230" font-size="16" fill="#666">קרקע</text>
+                                    
+                                    <!-- סימון זווית -->
+                                    <path d="M 250,250 A 20,20 0 0 1 235,240" fill="none" stroke="#0ea5e9" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            
+                            <p class="mt-4">שאלות:</p>
+                            <ol class="list-decimal list-inside">
+                                <li>מהי זווית ההתבוננות (θ) מנקודה A לראש המגדל?</li>
+                                <li>מהו המרחק בקו ישר מנקודה A לנקודה B (ראש המגדל)?</li>
+                                <li>אדם הולך מנקודה A לכיוון המגדל. באיזה מרחק מהמגדל זווית ההתבוננות תהיה 45°?</li>
+                            </ol>
+                        </div>
+                        `;
+                        
+                        botState.currentExercise = {
+                            type: 'applicationTrig',
+                            data: {
+                                towerHeight: 50,
+                                distance: 30,
+                            },
+                            answers: {
+                                viewingAngle: 59.04, // tan⁻¹(50/30) ≈ 59.04°
+                                directDistance: 58.31, // √(50² + 30²) = √(2500 + 900) = √3400 ≈ 58.31
+                                distance45Deg: 50 // ל-45° מתקיים tan(45°) = 1, לכן המרחק יהיה 50 מטר
+                            }
+                        };
+                    }
+                } else {
+                    // Default exercise
+                    exerciseHTML = `
+                    <div class="exercise">
+                        <h3 class="font-bold mb-2">תרגיל במתמטיקה</h3>
+                        
+                        <p>בחרת בנושא כללי במתמטיקה. הנה תרגיל בסיסי:</p>
+                        <p>אם 3x + 7 = 22, מהו הערך של x?</p>
+                    </div>
+                    `;
+                    
+                    botState.currentExercise = {
+                        type: 'equations',
+                        answers: {
+                            x: 5
+                        }
+                    };
+                }
+                
+                addBotMessage(exerciseHTML + `
+                <p class="mt-4">נסה/י לפתור את התרגיל בעצמך. אם את/ה צריך/ה עזרה, אשמח לתת לך רמז או הכוונה. פשוט כתוב/כתבי "אני צריך/ה רמז" או "אני לא מצליח/ה".</p>
+                <p>כשתסיים/י, אשמח לבדוק את הפתרון שלך.</p>
+                `);
+            }
+            
+            function processExerciseSolution(message) {
+                if (message.toLowerCase().includes('רמז') || message.toLowerCase().includes('לא מצליח') || message.toLowerCase().includes('עזרה')) {
+                    botState.stage = 'hint';
+                    botState.hintsGiven = 1;
+                    provideHint();
+                } else if (message.toLowerCase().includes('פתרון') || message.toLowerCase().includes('תשובה')) {
+                    botState.stage = 'solution';
+                    provideSolution();
+                } else {
+                    // מניחים שהוא ענה על התרגיל
+                    botState.userSolution = message;
+                    
+                    addBotMessage(`תודה על הפתרון שלך! 
+                    
+האם תרצה/י שאבדוק את הפתרון ואתן לך משוב, או שאתה מעוניין/ת בפתרון מלא לבדיקה עצמית?`, [
+                        'בדוק את הפתרון שלי ותן לי משוב',
+                        'הצג פתרון מלא לבדיקה עצמית'
+                    ]);
+                    
+                    botState.stage = 'checkSolution';
+                }
+            }
+            
+            function provideHint() {
+                let hintHTML = `<div class="hint">`;
+                
+                if (botState.topic.includes('צורות גיאומטריות')) {
+                    if (botState.currentExercise.type === 'rectangle') {
+                        if (botState.hintsGiven === 1) {
+                            hintHTML += `<p><strong>רמז 1:</strong> זכור/זכרי את הנוסחאות לחישוב היקף ושטח מלבן:</p>
+                            <ul class="list-disc list-inside">
+                                <li>היקף מלבן = 2 × (אורך + רוחב)</li>
+                                <li>שטח מלבן = אורך × רוחב</li>
+                            </ul>`;
+                        } else if (botState.hintsGiven === 2) {
+                            hintHTML += `<p><strong>רמז 2:</strong> כדי לחשב את ההיקף, עליך להציב את הערכים בנוסחה:</p>
+                            <p>היקף = 2 × (8 + 5) = ? </p>`;
+                        } else {
+                            hintHTML += `<p><strong>רמז 3:</strong> אם מחלקים את המלבן לשני חלקים שווים, כל חלק יהיה בעל אותו רוחב אבל חצי מהאורך. איך זה משפיע על השטח?</p>`;
+                        }
+                    } else if (botState.currentExercise.type === 'compoundShape') {
+                        if (botState.hintsGiven === 1) {
+                            hintHTML += `<p><strong>רמז 1:</strong> פרק את הצורה המורכבת לחלקים פשוטים - מלבן וחצי מעגל. חשב כל חלק בנפרד.</p>
+                            <ul class="list-disc list-inside">
+                                <li>שטח מלבן = אורך × רוחב</li>
+                                <li>שטח מעגל = π × r², ושטח חצי מעגל הוא חצי מזה</li>
+                            </ul>`;
+                        } else if (botState.hintsGiven === 2) {
+                            hintHTML += `<p><strong>רמז 2:</strong> לחישוב הנפח, חשוב על הגוף שמתקבל מסיבוב הצורה:</p>
+                            <ul class="list-disc list-inside">
+                                <li>המלבן יוצר גליל בסיבוב</li>
+                                <li>חצי המעגל יוצר כדור (או חצי כדור, תלוי בציר הסיבוב)</li>
+                            </ul>`;
+                        } else {
+                            hintHTML += `<p><strong>רמז 3:</strong> נוסחאות הנפח שתצטרך:</p>
+                            <ul class="list-disc list-inside">
+                                <li>נפח גליל = π × r² × h</li>
+                                <li>נפח חצי כדור = (2/3) × π × r³</li>
+                            </ul>`;
+                        }
+                    }
+                } else if (botState.topic.includes('משולשים')) {
+                    if (botState.currentExercise.type === 'triangleCongruence') {
+                        if (botState.hintsGiven === 1) {
+                            hintHTML += `<p><strong>רמז 1:</strong> בדוק את משפטי החפיפה של משולשים:</p>
+                            <ul class="list-disc list-inside">
+                                <li>צ.צ.צ - שלוש צלעות שוות</li>
+                                <li>צ.ז.צ - שתי צלעות והזווית שביניהן שוות</li>
+                                <li>ז.צ.ז - שתי זוויות והצלע שביניהן שוות</li>
+                            </ul>`;
+                        } else if (botState.hintsGiven === 2) {
+                            hintHTML += `<p><strong>רמז 2:</strong> בשני המשולשים יש לנו:</p>
+                            <ul class="list-disc list-inside">
+                                <li>AB = DE = 5 ס"מ</li>
+                                <li>AC = DF = 7 ס"מ</li>
+                                <li>זווית A = זווית D = 50°</li>
+                            </ul>
+                            <p>איזה משפט חפיפה מתקיים כאן?</p>`;
+                        } else {
+                            hintHTML += `<p><strong>רמז 3:</strong> אם המשולשים חופפים, כל האלמנטים המתאימים שווים זה לזה. כלומר, BC = EF וזווית B = זווית E.</p>
+                            <p>כדי למצוא את BC, אפשר להשתמש במשפט הקוסינוסים:</p>
+                            <p>BC² = AB² + AC² - 2 × AB × AC × cos(A)</p>`;
+                        }
+                    } else if (botState.currentExercise.type === 'triangleSimilarity') {
+                        if (botState.hintsGiven === 1) {
+                            hintHTML += `<p><strong>רמז 1:</strong> נקודה D מחלקת את AC ביחס 1:2. זה אומר ש-AD = 1/3 של AC, ו-DC = 2/3 של AC.</p>
+                            <p>כיוון שיש לנו קו מקביל ל-AB, נוצרים משולשים דומים.</p>`;
+                        } else if (botState.hintsGiven === 2) {
+                            hintHTML += `<p><strong>רמז 2:</strong> עבור קטעים מקבילים, יחס החלוקה נשמר. כלומר, אם D מחלקת את AC ביחס 1:2, אז E מחלקת את BC באותו יחס.</p>`;
+                        } else {
+                            hintHTML += `<p><strong>רמז 3:</strong> במשולשים דומים, יחס השטחים שווה ליחס הצלעות בריבוע.</p>
+                            <p>אם יחס הצלעות הוא 1:3 (כי AD = 1/3 של AC), אז יחס השטחים הוא 1:9.</p>`;
+                        }
+                    }
+                } else if (botState.topic.includes('טריגונומטריה')) {
+                    if (botState.currentExercise.type === 'rightTriangleTrig') {
+                        if (botState.hintsGiven === 1) {
+                            hintHTML += `<p><strong>רמז 1:</strong> לחישוב אורך היתר, השתמש/י במשפט פיתגורס:</p>
+                            <p>במשולש ישר זווית: a² + b² = c² (כאשר c הוא היתר)</p>`;
+                        } else if (botState.hintsGiven === 2) {
+                            hintHTML += `<p><strong>רמז 2:</strong> זכור/זכרי את הגדרות הפונקציות הטריגונומטריות במשולש ישר זווית:</p>
+                            <ul class="list-disc list-inside">
+                                <li>sin(זווית) = הניצב שמול הזווית ÷ היתר</li>
+                                <li>cos(זווית) = הניצב הסמוך לזווית ÷ היתר</li>
+                                <li>tan(זווית) = הניצב שמול הזווית ÷ הניצב הסמוך</li>
+                            </ul>`;
+                        } else {
+                            hintHTML += `<p><strong>רמז 3:</strong> לזווית α:</p>
+                            <ul class="list-disc list-inside">
+                                <li>הניצב שמול הזווית הוא AC = 8 ס"מ</li>
+                                <li>הניצב הסמוך לזווית הוא BC = 6 ס"מ</li>
+                                <li>אחרי שחישבת את היתר AB, תוכל לחשב את כל הפונקציות הטריגונומטריות</li>
+                            </ul>`;
+                        }
+                    } else if (botState.currentExercise.type === 'applicationTrig') {
+                        if (botState.hintsGiven === 1) {
+                            hintHTML += `<p><strong>רמז 1:</strong> לחישוב זווית ההתבוננות, הסתכל על המשולש הישר זווית:</p>
+                            <p>tan(θ) = הגובה ÷ המרחק האופקי = 50 ÷ 30</p>`;
+                        } else if (botState.hintsGiven === 2) {
+                            hintHTML += `<p><strong>רמז 2:</strong> לחישוב המרחק הישיר, השתמש במשפט פיתגורס:</p>
+                            <p>AB² = AC² + BC² = 50² + 30²</p>`;
+                        } else {
+                            hintHTML += `<p><strong>רמז 3:</strong> למציאת המרחק שבו זווית ההתבוננות היא 45°:</p>
+                            <p>במשולש ישר זווית, כאשר אחת הזוויות היא 45°, אז tan(45°) = 1</p>
+                            <p>כלומר, הגובה ÷ המרחק האופקי = 1</p>
+                            <p>חשוב מה המרחק האופקי שיקיים: 50 ÷ מרחק = 1</p>`;
+                        }
+                    }
+                } else {
+                    // Default hints
+                    if (botState.hintsGiven === 1) {
+                        hintHTML += `<p><strong>רמז 1:</strong> פתור את המשוואה שלב אחר שלב, תוך בידוד המשתנה x.</p>`;
+                    } else if (botState.hintsGiven === 2) {
+                        hintHTML += `<p><strong>רמז 2:</strong> חסר 7 משני צדי המשוואה כצעד ראשון.</p>`;
+                    } else {
+                        hintHTML += `<p><strong>רמז 3:</strong> לאחר שחיסרת 7, תקבל: 3x = 15. כעת חלק את שני האגפים ב-3.</p>`;
+                    }
+                }
+                
+                hintHTML += `</div>`;
+                
+                addBotMessage(hintHTML);
+                
+                // Offer more help or continue
+                addBotMessage(`האם הרמז עזר לך? תרצה/י לנסות לפתור עכשיו, או שאתן לך רמז נוסף?`, [
+                    'אנסה לפתור כעת',
+                    'אני צריך/ה רמז נוסף'
+                ]);
+                
+                botState.hintsGiven++;
+                
+                if (botState.hintsGiven > 3) {
+                    botState.stage = 'solution';
+                    setTimeout(() => {
+                        addBotMessage(`נראה שהתרגיל מאתגר. אולי כדאי שאציג לך את הפתרון המלא כדי שתוכל/י ללמוד ממנו?`, [
+                            'כן, הצג פתרון מלא',
+                            'לא, אמשיך לנסות בעצמי'
+                        ]);
+                    }, 1000);
+                }
+            }
+            
+            function provideNextHint() {
+                if (botState.hintsGiven <= 3) {
+                    provideHint();
+                } else {
+                    botState.stage = 'solution';
+                    provideSolution();
+                }
+            }
+            
+            function provideSolution() {
+                let solutionHTML = `<div class="exercise">
+                    <h3 class="font-bold mb-3">פתרון מלא</h3>
+                    <div class="solution-steps">`;
+                
+                if (botState.topic.includes('צורות גיאומטריות')) {
+                    if (botState.currentExercise.type === 'rectangle') {
+                        solutionHTML += `
+                        <div class="solution-step">
+                            <p>נתון מלבן עם אורך 8 ס"מ ורוחב 5 ס"מ.</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לחישוב ההיקף, נשתמש בנוסחה: היקף = 2 × (אורך + רוחב)</p>
+                            <p>היקף = 2 × (8 + 5) = 2 × 13 = 26 ס"מ</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לחישוב השטח, נשתמש בנוסחה: שטח = אורך × רוחב</p>
+                            <p>שטח = 8 × 5 = 40 סמ"ר</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>אם מחלקים את המלבן לשני מלבנים שווים על ידי קו המקביל לצלע הקצרה (רוחב), אז כל חלק יהיה בעל אורך 4 ס"מ ורוחב 5 ס"מ.</p>
+                            <p>שטח כל חלק = 4 × 5 = 20 סמ"ר</p>
+                            <p>ניתן גם לחשב זאת על ידי חלוקת השטח הכולל: 40 ÷ 2 = 20 סמ"ר</p>
+                        </div>
+                        `;
+                    } else if (botState.currentExercise.type === 'compoundShape') {
+                        solutionHTML += `
+                        <div class="solution-step">
+                            <p>נתונה צורה מורכבת ממלבן (רוחב 6 ס"מ, גובה 4 ס"מ) וחצי מעגל (רדיוס 3 ס"מ).</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>נחשב את שטח המלבן:</p>
+                            <p>שטח מלבן = אורך × רוחב = 6 × 4 = 24 סמ"ר</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>נחשב את שטח חצי המעגל:</p>
+                            <p>שטח מעגל שלם = π × r² = 3.14 × 3² = 3.14 × 9 = 28.26 סמ"ר</p>
+                            <p>שטח חצי מעגל = 28.26 ÷ 2 = 14.13 סמ"ר</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>נחשב את השטח הכולל של הצורה המורכבת:</p>
+                            <p>שטח כולל = שטח מלבן + שטח חצי מעגל = 24 + 14.13 = 38.13 סמ"ר</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לחישוב הנפח כשמסובבים את הצורה סביב הצלע התחתונה של המלבן:</p>
+                            <p>המלבן יוצר גליל ברדיוס 4 ס"מ וגובה 6 ס"מ:</p>
+                            <p>נפח גליל = π × r² × h = 3.14 × 4² × 6 = 3.14 × 16 × 6 = 301.44 סמ"ק</p>
+                            <p>חצי המעגל יוצר חצי כדור ברדיוס 3 ס"מ:</p>
+                            <p>נפח חצי כדור = (2/3) × π × r³ = (2/3) × 3.14 × 3³ = (2/3) × 3.14 × 27 = 56.52 סמ"ק</p>
+                            <p>נפח כולל = 301.44 + 56.52 = 357.96 סמ"ק</p>
+                        </div>
+                        `;
+                    }
+                } else if (botState.topic.includes('משולשים')) {
+                    if (botState.currentExercise.type === 'triangleCongruence') {
+                        solutionHTML += `
+                        <div class="solution-step">
+                            <p>נבדוק אם המשולשים ABC ו-DEF חופפים.</p>
+                            <p>נתון: AB = DE = 5 ס"מ, AC = DF = 7 ס"מ, וזווית A = זווית D = 50°.</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לפי הנתונים, יש לנו שתי צלעות שוות והזווית ביניהן שווה. זהו משפט החפיפה צ.ז.צ (צלע-זווית-צלע).</p>
+                            <p>לכן, המשולשים ABC ו-DEF חופפים לפי משפט צ.ז.צ.</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>כיוון שהמשולשים חופפים, כל האלמנטים המתאימים שווים:</p>
+                            <p>BC = EF, זווית B = זווית E, וזווית C = זווית F.</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לחישוב אורך הצלע BC, נשתמש במשפט הקוסינוסים:</p>
+                            <p>BC² = AB² + AC² - 2 × AB × AC × cos(A)</p>
+                            <p>BC² = 5² + 7² - 2 × 5 × 7 × cos(50°)</p>
+                            <p>BC² = 25 + 49 - 70 × 0.6428</p>
+                            <p>BC² = 74 - 45</p>
+                            <p>BC² = 29</p>
+                            <p>BC = √29 ≈ 5.39 ס"מ</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לחישוב הזווית B, נזכור שסכום הזוויות במשולש הוא 180°:</p>
+                            <p>A + B + C = 180°</p>
+                            <p>50° + B + C = 180°</p>
+                            <p>B + C = 130°</p>
+                            <p>אפשר גם להשתמש במשפט הסינוסים: sin(B)/AC = sin(A)/BC</p>
+                            <p>sin(B)/7 = sin(50°)/5.39</p>
+                            <p>sin(B) = 7 × sin(50°)/5.39 = 7 × 0.766/5.39 ≈ 0.9969</p>
+                            <p>B ≈ 85°</p>
+                            <p>לכן, C ≈ 45°</p>
+                        </div>
+                        `;
+                    } else if (botState.currentExercise.type === 'triangleSimilarity') {
+                        solutionHTML += `
+                        <div class="solution-step">
+                            <p>נתון: במשולש ABC, הנקודה D נמצאת על AC כך ש-AD:DC = 1:2.</p>
+                            <p>דרך D עובר ישר המקביל ל-AB וחותך את BC בנקודה E.</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>מהנתון AD:DC = 1:2, ניתן להסיק כי:</p>
+                            <p>AD = 1/3 של AC, ו-DC = 2/3 של AC</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לפי משפט חלוקת קטעים ביחס מוגדר, אם דרך D עובר ישר המקביל ל-AB, אז הנקודה E מחלקת את BC באותו יחס כמו הנקודה D את AC.</p>
+                            <p>לכן, BE:EC = AD:DC = 1:2</p>
+                            <p>כלומר, BE = 1/3 של BC, ו-EC = 2/3 של BC</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>נסתכל על המשולשים ADE ו-ABC:</p>
+                            <p>הם משולשים דומים כי DE || AB (צלעות מקבילות) וחולקים את הזווית A.</p>
+                            <p>יחס הדמיון של הצלעות הוא AD:AC = 1:3</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>במשולשים דומים, יחס השטחים שווה לריבוע יחס הצלעות המתאימות:</p>
+                            <p>שטח ADE : שטח ABC = (AD:AC)² = (1:3)² = 1:9</p>
+                            <p>כלומר, שטח ADE הוא 1/9 משטח ABC.</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>אם שטח המשולש ABC הוא 90 סמ"ר, אז:</p>
+                            <p>שטח ADE = 90 ÷ 9 = 10 סמ"ר</p>
+                        </div>
+                        `;
+                    }
+                } else if (botState.topic.includes('טריגונומטריה')) {
+                    if (botState.currentExercise.type === 'rightTriangleTrig') {
+                        solutionHTML += `
+                        <div class="solution-step">
+                            <p>נתון משולש ישר זווית ABC, ישר בזווית C, כאשר AC = 8 ס"מ ו-BC = 6 ס"מ.</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לחישוב אורך היתר AB, נשתמש במשפט פיתגורס:</p>
+                            <p>AB² = AC² + BC² = 8² + 6² = 64 + 36 = 100</p>
+                            <p>AB = √100 = 10 ס"מ</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לחישוב sin α, נזכיר שזווית α נמצאת בנקודה B:</p>
+                            <p>sin α = הניצב שמול הזווית ÷ היתר = AC ÷ AB = 8 ÷ 10 = 0.8</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לחישוב cos β, נזכיר שזווית β נמצאת בנקודה A:</p>
+                            <p>cos β = הניצב הסמוך לזווית ÷ היתר = BC ÷ AB = 6 ÷ 10 = 0.6</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לחישוב tan α, נשתמש בהגדרה:</p>
+                            <p>tan α = הניצב שמול הזווית ÷ הניצב הסמוך = AC ÷ BC = 8 ÷ 6 = 4/3 ≈ 1.33</p>
+                        </div>
+                        `;
+                    } else if (botState.currentExercise.type === 'applicationTrig') {
+                        solutionHTML += `
+                        <div class="solution-step">
+                            <p>נתון: מגדל בגובה 50 מטר. מנקודה A על הקרקע, המרחק האופקי הוא 30 מטר.</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לחישוב זווית ההתבוננות θ, נשתמש בטנגנס:</p>
+                            <p>tan(θ) = הגובה ÷ המרחק האופקי = 50 ÷ 30 = 5/3 ≈ 1.67</p>
+                            <p>θ = tan⁻¹(5/3) ≈ 59.04°</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>לחישוב המרחק הישיר מנקודה A לראש המגדל (נקודה B), נשתמש במשפט פיתגורס:</p>
+                            <p>AB² = BC² + AC² = 50² + 30² = 2500 + 900 = 3400</p>
+                            <p>AB = √3400 ≈ 58.31 מטר</p>
+                        </div>
+                        
+                        <div class="solution-step">
+                            <p>למציאת המרחק שבו זווית ההתבוננות היא 45°:</p>
+                            <p>tan(45°) = 1 = הגובה ÷ המרחק האופקי = 50 ÷ x</p>
+                            <p>x = 50 ÷ 1 = 50 מטר</p>
+                            <p>כלומר, האדם צריך להיות במרחק 50 מטר מהמגדל כדי שזווית ההתבוננות תהיה 45°.</p>
+                        </div>
+                        `;
+                    }
+                } else {
+                    // Default solution
+                    solutionHTML += `
+                    <div class="solution-step">
+                        <p>נפתור את המשוואה 3x + 7 = 22</p>
+                    </div>
+                    
+                    <div class="solution-step">
+                        <p>נחסר 7 משני צדי המשוואה:</p>
+                        <p>3x + 7 - 7 = 22 - 7</p>
+                        <p>3x = 15</p>
+                    </div>
+                    
+                    <div class="solution-step">
+                        <p>נחלק את שני צדי המשוואה ב-3:</p>
+                        <p>3x ÷ 3 = 15 ÷ 3</p>
+                        <p>x = 5</p>
+                    </div>
+                    
+                    <div class="solution-step">
+                        <p>נבדוק את התשובה על ידי הצבה במשוואה המקורית:</p>
+                        <p>3 × 5 + 7 = 15 + 7 = 22 ✓</p>
+                    </div>
+                    `;
+                }
+                
+                solutionHTML += `</div></div>`;
+                
+                addBotMessage(solutionHTML);
+                
+                // Suggest next actions
+                setTimeout(() => {
+                    addBotMessage(`האם הפתרון היה ברור? יש לך שאלות נוספות על הפתרון או שתרצה/י לנסות תרגיל נוסף?`, [
+                        'ברור, תודה! אשמח לתרגיל נוסף',
+                        'יש לי שאלה על הפתרון',
+                        'מספיק להיום, תודה'
+                    ]);
+                }, 1000);
+                
+                botState.stage = 'afterSolution';
+            }
+            
+            function processAfterSolution(message) {
+                if (message.includes('תרגיל') && message.includes('נוסף')) {
+                    // Reset state for a new exercise
+                    botState.stage = 'exerciseType';
+                    botState.currentExercise = null;
+                    botState.hintsGiven = 0;
+                    
+                    addBotMessage(`אשמח להציע לך תרגיל נוסף! האם תרצה/י להמשיך באותו נושא או לבחור נושא חדש?`, [
+                        'אותו נושא בבקשה',
+                        'רוצה לבחור נושא חדש'
+                    ]);
+                } else if (message.includes('שאלה')) {
+                    botState.stage = 'question';
+                    
+                    addBotMessage(`אשמח לענות על השאלות שלך לגבי הפתרון. מה לא היה ברור?`);
+                } else {
+                    addBotMessage(`תודה שלמדת איתי היום! אני כאן כדי לעזור לך להתקדם בלימודי המתמטיקה.
+                    
+אם תרצה/י להמשיך ללמוד בפעם אחרת, פשוט חזור/חזרי לאתר ונתחיל מחדש.
+
+בהצלחה בלימודים! 🎓`);
+                    
+                    // Reset state
+                    setTimeout(() => {
+                        botState = {
+                            stage: 'intro',
+                            topic: null,
+                            grade: null,
+                            level: null,
+                            exerciseType: null,
+                            currentExercise: null,
+                            userSolution: null,
+                            hintsGiven: 0
+                        };
+                        
+                        addBotMessage(`אם אתה רוצה להתחיל מחדש, פשוט כתוב "התחל" או "שלום" בתיבת ההודעות למטה.`);
+                    }, 3000);
+                }
+            }
+            
+            function defaultResponse() {
+                const responses = [
+                    `אני לא בטוח שהבנתי. האם תוכל/י להסביר שוב?`,
+                    `סליחה, אני לא מצליח להבין את ההודעה האחרונה שלך. אפשר לנסח מחדש?`,
+                    `נראה שהתבלבלתי. אפשר להבהיר מה אתה מבקש?`
+                ];
+                
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                addBotMessage(randomResponse);
+            }
+            
+            function addUserMessage(message) {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message user-message';
+                messageElement.innerHTML = message;
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            function addBotMessage(message, options = null) {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message bot-message';
+                messageElement.innerHTML = message;
+                
+                if (options) {
+                    const optionsContainer = document.createElement('div');
+                    optionsContainer.className = 'options-container';
+                    
+                    options.forEach(option => {
+                        const optionButton = document.createElement('button');
+                        optionButton.className = 'option-button';
+                        optionButton.textContent = option;
+                        optionButton.addEventListener('click', function() {
+                            // Add the selected option as a user message
+                            addUserMessage(option);
+                            
+                            // Process the selected option
+                            processUserMessage(option);
+                            
+                            // Remove all option buttons
+                            optionsContainer.remove();
+                        });
+                        optionsContainer.appendChild(optionButton);
+                    });
+                    
+                    messageElement.appendChild(optionsContainer);
+                }
+                
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
